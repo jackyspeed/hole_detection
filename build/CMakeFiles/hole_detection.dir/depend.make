@@ -207,6 +207,7 @@ CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/eigen3/Eigen/sr
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
+CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/ModelCoefficients.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/PCLHeader.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/PCLImage.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/PCLPointCloud2.h
@@ -218,9 +219,12 @@ CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/clo
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/centroid.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/common.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/concatenate.h
+CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/copy_point.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/eigen.h
+CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/impl/accumulators.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/impl/centroid.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/impl/common.hpp
+CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/impl/copy_point.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/impl/eigen.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/impl/io.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/common/impl/projection_matrix.hpp
@@ -273,6 +277,7 @@ CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/poi
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/point_traits.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/point_types.h
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/register_point_struct.h
+CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/search/impl/kdtree.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/search/impl/organized.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/search/impl/search.hpp
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: /usr/include/pcl-1.7/pcl/search/kdtree.h

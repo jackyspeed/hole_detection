@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/cs4752/Desktop/Github_Object_Geometry/hole_detection/hole_detection.cpp
+/home/cs4752/Desktop/hole_detection/hole_detection.cpp
 pcl/point_cloud.h
 -
 pcl/kdtree/kdtree_flann.h
@@ -1056,6 +1056,16 @@ Eigen/src/StlSupport/details.h
 
 /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 
+/usr/include/pcl-1.7/pcl/ModelCoefficients.h
+string
+-
+vector
+-
+ostream
+-
+pcl/PCLHeader.h
+-
+
 /usr/include/pcl-1.7/pcl/PCLHeader.h
 string
 -
@@ -1157,6 +1167,8 @@ pcl/PointIndices.h
 -
 pcl/cloud_iterator.h
 -
+pcl/common/impl/accumulators.hpp
+-
 pcl/common/impl/centroid.hpp
 -
 
@@ -1172,8 +1184,14 @@ pcl/common/impl/common.hpp
 pcl/conversions.h
 -
 
+/usr/include/pcl-1.7/pcl/common/copy_point.h
+pcl/common/impl/copy_point.hpp
+-
+
 /usr/include/pcl-1.7/pcl/common/eigen.h
 cmath
+-
+pcl/ModelCoefficients.h
 -
 Eigen/StdVector
 -
@@ -1194,6 +1212,20 @@ Eigen/Eigenvalues
 pcl/common/impl/eigen.hpp
 -
 
+/usr/include/pcl-1.7/pcl/common/impl/accumulators.hpp
+map
+-
+boost/mpl/filter_view.hpp
+-
+boost/fusion/include/mpl.hpp
+-
+boost/fusion/include/for_each.hpp
+-
+boost/fusion/include/as_vector.hpp
+-
+pcl/point_types.h
+-
+
 /usr/include/pcl-1.7/pcl/common/impl/centroid.hpp
 pcl/common/centroid.h
 -
@@ -1208,12 +1240,24 @@ pcl/point_types.h
 pcl/common/common.h
 -
 
+/usr/include/pcl-1.7/pcl/common/impl/copy_point.hpp
+pcl/point_types.h
+-
+pcl/point_traits.h
+-
+pcl/for_each_type.h
+-
+pcl/common/concatenate.h
+-
+
 /usr/include/pcl-1.7/pcl/common/impl/eigen.hpp
-pcl/pcl_macros.h
+pcl/console/print.h
 -
 
 /usr/include/pcl-1.7/pcl/common/impl/io.hpp
 pcl/common/concatenate.h
+-
+pcl/common/copy_point.h
 -
 pcl/point_types.h
 -
@@ -1230,6 +1274,8 @@ pcl/pcl_base.h
 pcl/PointIndices.h
 -
 pcl/conversions.h
+-
+pcl/exceptions.h
 -
 locale
 -
@@ -1565,11 +1611,15 @@ pcl/point_representation.h
 -
 pcl/common/io.h
 -
+pcl/common/copy_point.h
+-
 
 /usr/include/pcl-1.7/pcl/kdtree/kdtree_flann.h
 pcl/kdtree/kdtree.h
 -
 pcl/kdtree/flann.h
+-
+boost/shared_array.hpp
 -
 pcl/kdtree/impl/kdtree_flann.hpp
 -
@@ -1647,6 +1697,8 @@ cstring
 -
 string.h
 -
+Eigen/Core
+-
 pcl/pcl_macros.h
 -
 octree_container.h
@@ -1677,6 +1729,8 @@ pcl/point_types.h
 -
 octree_pointcloud.h
 /usr/include/pcl-1.7/pcl/octree/octree_pointcloud.h
+pcl/octree/impl/octree_search.hpp
+-
 
 /usr/include/pcl-1.7/pcl/pcl_base.h
 pcl/pcl_macros.h
@@ -1759,6 +1813,10 @@ boost/mpl/assert.hpp
 -
 boost/mpl/bool.hpp
 -
+Eigen/Core
+-
+Eigen/src/StlSupport/details.h
+-
 
 /usr/include/pcl-1.7/pcl/point_types.h
 pcl/pcl_macros.h
@@ -1766,6 +1824,12 @@ pcl/pcl_macros.h
 bitset
 -
 pcl/register_point_struct.h
+-
+boost/mpl/contains.hpp
+-
+boost/mpl/fold.hpp
+-
+boost/mpl/vector.hpp
 -
 pcl/impl/point_types.hpp
 -
@@ -1794,6 +1858,12 @@ boost/type_traits.hpp
 stddef.h
 -
 
+/usr/include/pcl-1.7/pcl/search/impl/kdtree.hpp
+pcl/search/kdtree.h
+-
+pcl/search/impl/search.hpp
+-
+
 /usr/include/pcl-1.7/pcl/search/impl/organized.hpp
 pcl/search/organized.h
 -
@@ -1812,6 +1882,8 @@ pcl/search/search.h
 pcl/search/search.h
 -
 pcl/kdtree/kdtree_flann.h
+-
+pcl/search/impl/kdtree.hpp
 -
 
 /usr/include/pcl-1.7/pcl/search/octree.h
@@ -1858,6 +1930,8 @@ pcl/point_cloud.h
 pcl/for_each_type.h
 -
 pcl/common/concatenate.h
+-
+pcl/common/copy_point.h
 -
 pcl/search/impl/search.hpp
 -

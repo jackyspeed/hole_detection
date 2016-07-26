@@ -47,10 +47,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cs4752/Desktop/Github_Object_Geometry/hole_detection
+CMAKE_SOURCE_DIR = /home/cs4752/Desktop/hole_detection
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build
+CMAKE_BINARY_DIR = /home/cs4752/Desktop/hole_detection/build
 
 #=============================================================================
 # Target rules for target CMakeFiles/hole_detection.dir
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/bu
 CMakeFiles/hole_detection.dir/all:
 	$(MAKE) -f CMakeFiles/hole_detection.dir/build.make CMakeFiles/hole_detection.dir/depend
 	$(MAKE) -f CMakeFiles/hole_detection.dir/build.make CMakeFiles/hole_detection.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/cs4752/Desktop/hole_detection/build/CMakeFiles  1
 	@echo "Built target hole_detection"
 .PHONY : CMakeFiles/hole_detection.dir/all
 
@@ -69,9 +69,9 @@ all: CMakeFiles/hole_detection.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/hole_detection.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/cs4752/Desktop/hole_detection/build/CMakeFiles 1
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/hole_detection.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/cs4752/Desktop/hole_detection/build/CMakeFiles 0
 .PHONY : CMakeFiles/hole_detection.dir/rule
 
 # Convenience name for target.

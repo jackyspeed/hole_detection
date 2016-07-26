@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cs4752/Desktop/Github_Object_Geometry/hole_detection
+CMAKE_SOURCE_DIR = /home/cs4752/Desktop/hole_detection
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build
+CMAKE_BINARY_DIR = /home/cs4752/Desktop/hole_detection/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/hole_detection.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/hole_detection.dir/flags.make
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: CMakeFiles/hole_detection.dir/flags.make
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: ../hole_detection.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/cs4752/Desktop/hole_detection/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/hole_detection.dir/hole_detection.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/hole_detection.dir/hole_detection.cpp.o -c /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/hole_detection.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/hole_detection.dir/hole_detection.cpp.o -c /home/cs4752/Desktop/hole_detection/hole_detection.cpp
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/hole_detection.dir/hole_detection.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/hole_detection.cpp > CMakeFiles/hole_detection.dir/hole_detection.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/cs4752/Desktop/hole_detection/hole_detection.cpp > CMakeFiles/hole_detection.dir/hole_detection.cpp.i
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hole_detection.dir/hole_detection.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/hole_detection.cpp -o CMakeFiles/hole_detection.dir/hole_detection.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/cs4752/Desktop/hole_detection/hole_detection.cpp -o CMakeFiles/hole_detection.dir/hole_detection.cpp.s
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o.requires:
 .PHONY : CMakeFiles/hole_detection.dir/hole_detection.cpp.o.requires
@@ -198,6 +198,6 @@ CMakeFiles/hole_detection.dir/clean:
 .PHONY : CMakeFiles/hole_detection.dir/clean
 
 CMakeFiles/hole_detection.dir/depend:
-	cd /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/cs4752/Desktop/Github_Object_Geometry/hole_detection /home/cs4752/Desktop/Github_Object_Geometry/hole_detection /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build /home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build/CMakeFiles/hole_detection.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/cs4752/Desktop/hole_detection/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/cs4752/Desktop/hole_detection /home/cs4752/Desktop/hole_detection /home/cs4752/Desktop/hole_detection/build /home/cs4752/Desktop/hole_detection/build /home/cs4752/Desktop/hole_detection/build/CMakeFiles/hole_detection.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/hole_detection.dir/depend
 

@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/cs4752/Desktop/Github_Object_Geometry/hole_detection/hole_detection.cpp" "/home/cs4752/Desktop/Github_Object_Geometry/hole_detection/build/CMakeFiles/hole_detection.dir/hole_detection.cpp.o"
+  "/home/cs4752/Desktop/hole_detection/hole_detection.cpp" "/home/cs4752/Desktop/hole_detection/build/CMakeFiles/hole_detection.dir/hole_detection.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 
