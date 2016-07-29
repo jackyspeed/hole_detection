@@ -49,7 +49,7 @@ endif()
 
 
 set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "c")
-set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "/usr/lib/gcc/x86_64-linux-gnu/4.8;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib;/opt/intel/compilers_and_libraries_2016.3.210/linux/ipp/lib/intel64;/opt/intel/compilers_and_libraries_2016.3.210/linux/compiler/lib/intel64;/opt/intel/compilers_and_libraries_2016.3.210/linux/mkl/lib/intel64;/opt/intel/compilers_and_libraries_2016.3.210/linux/tbb/lib/intel64/gcc4.4;/opt/intel/compilers_and_libraries_2016.3.210/linux/daal/lib/intel64_lin;/opt/intel/compilers_and_libraries_2016.3.210/linux/tbb/lib/intel64_lin/gcc4.4;/opt/intel/compilers_and_libraries_2016.3.210/linux/compiler/lib/intel64_lin")
+set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "/usr/lib/gcc/x86_64-linux-gnu/4.8;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib")
 set(CMAKE_C_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")
 
 

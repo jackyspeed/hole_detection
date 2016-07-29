@@ -1,4 +1,4 @@
-# Install script for directory: /home/cs4752/Desktop/hole_detection
+# Install script for directory: /home/cs4752/hole_detection
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,7 +38,7 @@ ELSE(CMAKE_INSTALL_COMPONENT)
   SET(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 ENDIF(CMAKE_INSTALL_COMPONENT)
 
-FILE(WRITE "/home/cs4752/Desktop/hole_detection/build/${CMAKE_INSTALL_MANIFEST}" "")
+FILE(WRITE "/home/cs4752/hole_detection/build/${CMAKE_INSTALL_MANIFEST}" "")
 FOREACH(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  FILE(APPEND "/home/cs4752/Desktop/hole_detection/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
+  FILE(APPEND "/home/cs4752/hole_detection/build/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
 ENDFOREACH(file)

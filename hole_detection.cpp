@@ -1,11 +1,14 @@
 #include <pcl/point_cloud.h>
+#include <pcl/visualization/cloud_viewer.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/console/parse.h>
+#include <pcl/io/io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/features/normal_3d.h>
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -23,6 +26,7 @@ void showHelp()
 	std::cout << "_quit:  Exits program." << std::endl;	
 	std::cout << "_points:  Prints points contained in point cloud." << std::endl;
 	std::cout << "_normals:  Prints normals of points in cloud." << std::endl;
+	std::cout << "_visualize: Displays point cloud of .pcd file that has been processed in calculate_hole" << std::endl;
 	std::cout << "_holes:  Calculates hole (returns set of points on boundary and visualizes image with boundary points red).\n" << std::endl;
 }
 
@@ -88,8 +92,8 @@ void kd_tree(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, int x=1, int y=1, int z
 	bool k = false;
 	std::cout<<"Would you like a radius(r) search, a K(k) search or both(b): "<<std::endl;
 	char input;
-	std::cin >> input;	
 	while(true){
+		std::cin >> input;	
 		if(input == 'k'){
 			k = true;
 			break;
@@ -212,15 +216,23 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
  
 	// Neighbors within radius search
 	std::vector<int> pointIdxRadiusSearch;
+	
+  	std::ofstream new_file;
+  	new_file.open ("new_file.pcd", std::ios_base::app);
 	std::vector<float> pointRadiusSquaredDistance;
   if ( kdtree.radiusSearch (searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0 )
   {
-    for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i)
+    for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i){
       std::cout << "    "  <<   cloud->points[ pointIdxRadiusSearch[i] ].x 
         << ", " << cloud->points[ pointIdxRadiusSearch[i] ].y 
         << ", " << cloud->points[ pointIdxRadiusSearch[i] ].z 
         << " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
+      new_file <<   cloud->points[ pointIdxRadiusSearch[i] ].x 
+        << " " << cloud->points[ pointIdxRadiusSearch[i] ].y 
+        << " " << cloud->points[ pointIdxRadiusSearch[i] ].z << "\n"; 
+    }
   }
+  new_file.close();
   std::cout << "points: " << pointIdxRadiusSearch.size() << std::endl;
 /**********************************************************************/
 
@@ -236,6 +248,43 @@ float dist = sqrt(pow(p2[0]-p1[0],2.0) + pow(p2[1]-p1[1],2.0) + pow(p2[2]-p1[2],
 
 }
 
+//function needed for viewing pcl
+void 
+viewerOneOff (pcl::visualization::PCLVisualizer& viewer)
+{
+    viewer.setBackgroundColor (1.0, 0.5, 1.0);
+    /*pcl::PointXYZ o;
+    o.x = 1.0;
+    o.y = 0;
+    o.z = 0;
+    viewer.addSphere (o, 0.25, "sphere", 0);
+    std::cout << "i only run once" << std::endl;*/
+    
+}
+
+void visualize(){
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>); 
+	pcl::io::loadPCDFile ("new_file.pcd", *cloud); 
+
+	pcl::visualization::CloudViewer viewer("Cloud Viewer"); 
+
+	//blocks until the cloud is actually rendered 
+	viewer.showCloud(cloud);   
+	//use the following functions to get access to the underlying more advanced/powerful 
+	//PCLVisualizer 
+
+	//This will only get called once 
+	viewer.runOnVisualizationThreadOnce (viewerOneOff); 
+
+	//This will get called once per visualization iteration 
+	//viewer.runOnVisualizationThread (viewerPsycho); 
+	while (!viewer.wasStopped ()) 
+	{ 
+	//you can also do cool processing here 
+	//FIXME: Note that this is running in a separate thread from viewerPsycho 
+	//and you should guard against race conditions yourself... 
+	}
+}
 /*****************************MAIN************************************/
 int main (int argc, char** argv)
 {
@@ -296,6 +345,9 @@ int main (int argc, char** argv)
 		}
 		else if (line == "_normals") {
 			normals (cloud);
+		}
+		else if (line == "_visualize") {
+			visualize();
 		}
 		else if (line == "_holes") {
 			calculate_hole (cloud);

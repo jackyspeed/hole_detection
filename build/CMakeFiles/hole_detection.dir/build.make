@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cs4752/Desktop/hole_detection
+CMAKE_SOURCE_DIR = /home/cs4752/hole_detection
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cs4752/Desktop/hole_detection/build
+CMAKE_BINARY_DIR = /home/cs4752/hole_detection/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/hole_detection.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/hole_detection.dir/flags.make
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: CMakeFiles/hole_detection.dir/flags.make
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o: ../hole_detection.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/cs4752/Desktop/hole_detection/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/cs4752/hole_detection/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/hole_detection.dir/hole_detection.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/hole_detection.dir/hole_detection.cpp.o -c /home/cs4752/Desktop/hole_detection/hole_detection.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/hole_detection.dir/hole_detection.cpp.o -c /home/cs4752/hole_detection/hole_detection.cpp
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/hole_detection.dir/hole_detection.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/cs4752/Desktop/hole_detection/hole_detection.cpp > CMakeFiles/hole_detection.dir/hole_detection.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/cs4752/hole_detection/hole_detection.cpp > CMakeFiles/hole_detection.dir/hole_detection.cpp.i
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/hole_detection.dir/hole_detection.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/cs4752/Desktop/hole_detection/hole_detection.cpp -o CMakeFiles/hole_detection.dir/hole_detection.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/cs4752/hole_detection/hole_detection.cpp -o CMakeFiles/hole_detection.dir/hole_detection.cpp.s
 
 CMakeFiles/hole_detection.dir/hole_detection.cpp.o.requires:
 .PHONY : CMakeFiles/hole_detection.dir/hole_detection.cpp.o.requires
@@ -87,42 +87,30 @@ hole_detection: /usr/lib/x86_64-linux-gnu/libboost_thread.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libboost_iostreams.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
-hole_detection: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libpthread.so
 hole_detection: /usr/lib/libpcl_common.so
-hole_detection: /usr/lib/x86_64-linux-gnu/libflann_cpp_s.a
-hole_detection: /usr/lib/libpcl_kdtree.so
 hole_detection: /usr/lib/libpcl_octree.so
-hole_detection: /usr/lib/libpcl_search.so
-hole_detection: /usr/lib/x86_64-linux-gnu/libqhull.so
-hole_detection: /usr/lib/libpcl_surface.so
-hole_detection: /usr/lib/libpcl_sample_consensus.so
 hole_detection: /usr/lib/libOpenNI.so
 hole_detection: /usr/lib/libvtkCommon.so.5.8.0
-hole_detection: /usr/lib/libvtkFiltering.so.5.8.0
-hole_detection: /usr/lib/libvtkImaging.so.5.8.0
-hole_detection: /usr/lib/libvtkGraphics.so.5.8.0
-hole_detection: /usr/lib/libvtkGenericFiltering.so.5.8.0
-hole_detection: /usr/lib/libvtkIO.so.5.8.0
 hole_detection: /usr/lib/libvtkRendering.so.5.8.0
-hole_detection: /usr/lib/libvtkVolumeRendering.so.5.8.0
 hole_detection: /usr/lib/libvtkHybrid.so.5.8.0
-hole_detection: /usr/lib/libvtkWidgets.so.5.8.0
-hole_detection: /usr/lib/libvtkParallel.so.5.8.0
-hole_detection: /usr/lib/libvtkInfovis.so.5.8.0
-hole_detection: /usr/lib/libvtkGeovis.so.5.8.0
-hole_detection: /usr/lib/libvtkViews.so.5.8.0
 hole_detection: /usr/lib/libvtkCharts.so.5.8.0
 hole_detection: /usr/lib/libpcl_io.so
+hole_detection: /usr/lib/x86_64-linux-gnu/libflann_cpp_s.a
+hole_detection: /usr/lib/libpcl_kdtree.so
+hole_detection: /usr/lib/libpcl_search.so
+hole_detection: /usr/lib/libpcl_sample_consensus.so
 hole_detection: /usr/lib/libpcl_filters.so
 hole_detection: /usr/lib/libpcl_features.so
 hole_detection: /usr/lib/libpcl_keypoints.so
-hole_detection: /usr/lib/libpcl_registration.so
 hole_detection: /usr/lib/libpcl_segmentation.so
-hole_detection: /usr/lib/libpcl_recognition.so
 hole_detection: /usr/lib/libpcl_visualization.so
-hole_detection: /usr/lib/libpcl_people.so
 hole_detection: /usr/lib/libpcl_outofcore.so
+hole_detection: /usr/lib/libpcl_registration.so
+hole_detection: /usr/lib/libpcl_recognition.so
+hole_detection: /usr/lib/x86_64-linux-gnu/libqhull.so
+hole_detection: /usr/lib/libpcl_surface.so
+hole_detection: /usr/lib/libpcl_people.so
 hole_detection: /usr/lib/libpcl_tracking.so
 hole_detection: /usr/lib/libpcl_apps.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libboost_system.so
@@ -131,53 +119,41 @@ hole_detection: /usr/lib/x86_64-linux-gnu/libboost_thread.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libboost_iostreams.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libboost_serialization.so
-hole_detection: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libpthread.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libqhull.so
 hole_detection: /usr/lib/libOpenNI.so
 hole_detection: /usr/lib/x86_64-linux-gnu/libflann_cpp_s.a
 hole_detection: /usr/lib/libvtkCommon.so.5.8.0
-hole_detection: /usr/lib/libvtkFiltering.so.5.8.0
-hole_detection: /usr/lib/libvtkImaging.so.5.8.0
-hole_detection: /usr/lib/libvtkGraphics.so.5.8.0
-hole_detection: /usr/lib/libvtkGenericFiltering.so.5.8.0
-hole_detection: /usr/lib/libvtkIO.so.5.8.0
 hole_detection: /usr/lib/libvtkRendering.so.5.8.0
-hole_detection: /usr/lib/libvtkVolumeRendering.so.5.8.0
 hole_detection: /usr/lib/libvtkHybrid.so.5.8.0
-hole_detection: /usr/lib/libvtkWidgets.so.5.8.0
-hole_detection: /usr/lib/libvtkParallel.so.5.8.0
-hole_detection: /usr/lib/libvtkInfovis.so.5.8.0
-hole_detection: /usr/lib/libvtkGeovis.so.5.8.0
-hole_detection: /usr/lib/libvtkViews.so.5.8.0
 hole_detection: /usr/lib/libvtkCharts.so.5.8.0
 hole_detection: /usr/lib/libpcl_common.so
-hole_detection: /usr/lib/libpcl_kdtree.so
 hole_detection: /usr/lib/libpcl_octree.so
-hole_detection: /usr/lib/libpcl_search.so
-hole_detection: /usr/lib/libpcl_surface.so
-hole_detection: /usr/lib/libpcl_sample_consensus.so
 hole_detection: /usr/lib/libpcl_io.so
+hole_detection: /usr/lib/libpcl_kdtree.so
+hole_detection: /usr/lib/libpcl_search.so
+hole_detection: /usr/lib/libpcl_sample_consensus.so
 hole_detection: /usr/lib/libpcl_filters.so
 hole_detection: /usr/lib/libpcl_features.so
 hole_detection: /usr/lib/libpcl_keypoints.so
-hole_detection: /usr/lib/libpcl_registration.so
 hole_detection: /usr/lib/libpcl_segmentation.so
-hole_detection: /usr/lib/libpcl_recognition.so
 hole_detection: /usr/lib/libpcl_visualization.so
-hole_detection: /usr/lib/libpcl_people.so
 hole_detection: /usr/lib/libpcl_outofcore.so
+hole_detection: /usr/lib/libpcl_registration.so
+hole_detection: /usr/lib/libpcl_recognition.so
+hole_detection: /usr/lib/libpcl_surface.so
+hole_detection: /usr/lib/libpcl_people.so
 hole_detection: /usr/lib/libpcl_tracking.so
 hole_detection: /usr/lib/libpcl_apps.so
 hole_detection: /usr/lib/libvtkViews.so.5.8.0
 hole_detection: /usr/lib/libvtkInfovis.so.5.8.0
 hole_detection: /usr/lib/libvtkWidgets.so.5.8.0
-hole_detection: /usr/lib/libvtkVolumeRendering.so.5.8.0
 hole_detection: /usr/lib/libvtkHybrid.so.5.8.0
 hole_detection: /usr/lib/libvtkParallel.so.5.8.0
+hole_detection: /usr/lib/libvtkVolumeRendering.so.5.8.0
 hole_detection: /usr/lib/libvtkRendering.so.5.8.0
-hole_detection: /usr/lib/libvtkImaging.so.5.8.0
 hole_detection: /usr/lib/libvtkGraphics.so.5.8.0
+hole_detection: /usr/lib/libvtkImaging.so.5.8.0
 hole_detection: /usr/lib/libvtkIO.so.5.8.0
 hole_detection: /usr/lib/libvtkFiltering.so.5.8.0
 hole_detection: /usr/lib/libvtkCommon.so.5.8.0
@@ -198,6 +174,6 @@ CMakeFiles/hole_detection.dir/clean:
 .PHONY : CMakeFiles/hole_detection.dir/clean
 
 CMakeFiles/hole_detection.dir/depend:
-	cd /home/cs4752/Desktop/hole_detection/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/cs4752/Desktop/hole_detection /home/cs4752/Desktop/hole_detection /home/cs4752/Desktop/hole_detection/build /home/cs4752/Desktop/hole_detection/build /home/cs4752/Desktop/hole_detection/build/CMakeFiles/hole_detection.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/cs4752/hole_detection/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/cs4752/hole_detection /home/cs4752/hole_detection /home/cs4752/hole_detection/build /home/cs4752/hole_detection/build /home/cs4752/hole_detection/build/CMakeFiles/hole_detection.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/hole_detection.dir/depend
 
