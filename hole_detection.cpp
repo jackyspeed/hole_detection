@@ -138,14 +138,23 @@ void kd_tree(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, int x=1, int y=1, int z
 			<< ", " << searchPoint.z
 			<< ") with K=" << K << std::endl;
 
+    std::ofstream new_file;
+  	new_file.open ("new_file.pcd", std::ios_base::app);
+    
 		if ( kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance) > 0 )
 		{
-			for (size_t i = 0; i < pointIdxNKNSearch.size (); ++i)
+			for (size_t i = 0; i < pointIdxNKNSearch.size (); ++i){
 				std::cout << "    "  <<   cloud->points[ pointIdxNKNSearch[i] ].x 
 					<< ", " << cloud->points[ pointIdxNKNSearch[i] ].y 
 					<< ", " << cloud->points[ pointIdxNKNSearch[i] ].z 
+					<< " (squared distance: " << pointNKNSquaredDistance[i] << ")" << std::endl; 
+        new_file << "    "  <<   cloud->points[ pointIdxNKNSearch[i] ].x 
+					<< ", " << cloud->points[ pointIdxNKNSearch[i] ].y 
+					<< ", " << cloud->points[ pointIdxNKNSearch[i] ].z 
 					<< " (squared distance: " << pointNKNSquaredDistance[i] << ")" << std::endl;
-		}
+      }
+    }
+    new_file.close();
 	}
 
 	if(r){
@@ -215,10 +224,8 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 	std::cin >> radius;
  
 	// Neighbors within radius search
-	std::vector<int> pointIdxRadiusSearch;
-	
-  	std::ofstream new_file;
-  	new_file.open ("new_file.pcd", std::ios_base::app);
+	std::vector<int> pointIdxRadiusSearch;	
+  	
 	std::vector<float> pointRadiusSquaredDistance;
   if ( kdtree.radiusSearch (searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0 )
   {
@@ -227,12 +234,8 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
         << ", " << cloud->points[ pointIdxRadiusSearch[i] ].y 
         << ", " << cloud->points[ pointIdxRadiusSearch[i] ].z 
         << " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
-      new_file <<   cloud->points[ pointIdxRadiusSearch[i] ].x 
-        << " " << cloud->points[ pointIdxRadiusSearch[i] ].y 
-        << " " << cloud->points[ pointIdxRadiusSearch[i] ].z << "\n"; 
     }
   }
-  new_file.close();
   std::cout << "points: " << pointIdxRadiusSearch.size() << std::endl;
 /**********************************************************************/
 
