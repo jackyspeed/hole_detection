@@ -237,9 +237,6 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
     }
   }
   std::cout << "points: " << pointIdxRadiusSearch.size() << std::endl;
-/**********************************************************************/
-
-/************** NORMALS ***********************************************/
 
 float p1[3] = {1,1,1}; //said point 1
 float p2[3] = {2,2,2}; //said point 2 
