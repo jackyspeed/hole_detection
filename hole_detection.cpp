@@ -15,7 +15,6 @@
 #include <ctime>
 #include <math.h>
 
-
 // prints help menu
 void showHelp()
 {
@@ -285,9 +284,34 @@ void visualize(){
 	//and you should guard against race conditions yourself... 
 	}
 }
+
+class Node{
+  public:
+    int x;
+    int y;
+    int z;
+    int counter = 0;
+    Node *neighbors[10];
+    void setXYZ(int c1, int c2, int c3);
+    void add_neighbor(Node neighbor);
+};
+
+void Node::setXYZ(int c1, int c2, int c3){
+  x = c1;
+  y = c2;
+  z = c3;
+}
+
+void Node::add_neighbor(Node neighbor){
+  std::cout<<neighbors[counter]<<std::endl;
+  neighbors[counter++]* = neighbor;
+}
+
 /*****************************MAIN************************************/
 int main (int argc, char** argv)
 {
+  Node node;
+  std::cout<<"node "<<std::endl;
 	// Fetch point cloud filename in arguments | Works with PCD and PLY files
 	std::vector<int> filenames;
 	bool file_is_pcd = false;
