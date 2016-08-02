@@ -1,3 +1,5 @@
 CMakeFiles
 Makefile
-hole_detection*.cmake
+hole_detection
+*.cmake
+CMakeCache.txt
