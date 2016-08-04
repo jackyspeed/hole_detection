@@ -290,11 +290,16 @@ class Node{
     int x;
     int y;
     int z;
-    int counter = 0;
+    int counter;
+    Node();
     Node *neighbors[10];
     void setXYZ(int c1, int c2, int c3);
     void add_neighbor(Node neighbor);
 };
+
+Node::Node(){
+  counter = 0;
+}
 
 void Node::setXYZ(int c1, int c2, int c3){
   x = c1;
@@ -304,7 +309,7 @@ void Node::setXYZ(int c1, int c2, int c3){
 
 void Node::add_neighbor(Node neighbor){
   std::cout<<neighbors[counter]<<std::endl;
-  neighbors[counter++]* = neighbor;
+  *neighbors[counter++] = neighbor;
 }
 
 /*****************************MAIN************************************/
