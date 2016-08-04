@@ -202,8 +202,9 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 	std::vector<int> pointIdxNKNSearch(K);
 	std::vector<float> pointNKNSquaredDistance(K);
 
-  for(int j = 0; j < cloud.size(): j++){
-    searchPoint = cloud->points[j]
+  for(int j = 0; j < cloud->points.size(); j++){
+    searchPoint = cloud->points[j];
+    std::cout<<"\n\n"<<searchPoint<<"\n\n"<<std::endl;
     if ( kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance) > 0 )
     {
       for (size_t i = 0; i < pointIdxNKNSearch.size (); ++i){
