@@ -66,7 +66,6 @@ void normals(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 	}
 }
 
-
 // finds angle between two three dimensional vectors
 float angle_between_vectors (float *nu, float *nv)
 {
@@ -195,20 +194,6 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
 	pcl::PointXYZ searchPoint;
 
-	std::string coor[3] = {"","",""};	
-
-	std::cout<< "Enter a search point xyz value separated by spaces: " <<std::endl;
-	std::string line;
-	std::getline(std::cin, line);
-	std::stringstream stream(line);
-	for(int i  = 0; i < 3; i++) {
-		stream >> coor[i];
-		if(!stream)
-			break;
-		std::cout << "Found integer: " << coor[i] << "\n"; // for debugging
-	}
-	std::cout<< coor[0] <<" "<< coor[1] <<" "<< coor[2] <<std::endl;
-
 	std::cout<< "Enter a K value: " <<std::endl;
 	int K = 0;
 	std::cin >> K;
@@ -216,26 +201,19 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 	// K nearest neighbor search
 	std::vector<int> pointIdxNKNSearch(K);
 	std::vector<float> pointNKNSquaredDistance(K);
-	kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance);
 
-	std::cout<< "Enter a radius: " <<std::endl;
-	float radius = 0;
-	std::cin >> radius;
- 
-	// Neighbors within radius search
-	std::vector<int> pointIdxRadiusSearch;	
-  	
-	std::vector<float> pointRadiusSquaredDistance;
-  if ( kdtree.radiusSearch (searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0 )
-  {
-    for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i){
-      std::cout << "    "  <<   cloud->points[ pointIdxRadiusSearch[i] ].x 
-        << ", " << cloud->points[ pointIdxRadiusSearch[i] ].y 
-        << ", " << cloud->points[ pointIdxRadiusSearch[i] ].z 
-        << " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
+  for(int j = 0; j < cloud.size(): j++){
+    searchPoint = cloud->points[j]
+    if ( kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance) > 0 )
+    {
+      for (size_t i = 0; i < pointIdxNKNSearch.size (); ++i){
+        std::cout << "    "  <<   cloud->points[ pointIdxNKNSearch[i] ].x 
+          << ", " << cloud->points[ pointIdxNKNSearch[i] ].y 
+          << ", " << cloud->points[ pointIdxNKNSearch[i] ].z 
+          << " (squared distance: " << pointNKNSquaredDistance[i] << ")" << std::endl; 
+      }
     }
   }
-  std::cout << "points: " << pointIdxRadiusSearch.size() << std::endl;
 
 float p1[3] = {1,1,1}; //said point 1
 float p2[3] = {2,2,2}; //said point 2 
