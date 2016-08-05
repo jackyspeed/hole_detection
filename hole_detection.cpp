@@ -15,6 +15,34 @@
 #include <ctime>
 #include <math.h>
 
+class Node{
+  public:
+    int x;
+    int y;
+    int z;
+    int prob;
+    int counter;
+    void set_node(pcl::PointXYZ ptr);
+    Node *neighbors[10];
+    void add_neighbor(pcl::PointXYZ pt);
+};
+
+void Node::set_node(pcl::PointXYZ point){ 
+  counter = 0;
+  x = point.x;
+  std::cout<<"set node"<<std::endl;
+  y = point.y;
+  z = point.z;
+  prob = 0;
+}
+
+void Node::add_neighbor(pcl::PointXYZ pt){
+  Node temp;
+  temp.set_node(pt);
+  std::cout<<"wtf is the problem"<<std::endl;
+  *neighbors[counter++] = temp;
+}
+
 // prints help menu
 void showHelp()
 {
@@ -67,8 +95,7 @@ void normals(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 }
 
 // finds angle between two three dimensional vectors
-float angle_between_vectors (float *nu, float *nv)
-{
+float angle_between_vectors (float *nu, float *nv){
 	float l1, l2, angle, param ;
 	l1 = sqrt(nu[0]*nu[0] + nu[1]*nu[1] + nu[2]*nu[2]) ;
 	l2 = sqrt(nv[0]*nv[0] + nv[1]*nv[1] + nv[2]*nv[2]) ;
@@ -139,8 +166,7 @@ void kd_tree(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, int x=1, int y=1, int z
     std::ofstream new_file;
   	new_file.open ("new_file.pcd", std::ios_base::app);
     
-		if ( kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance) > 0 )
-		{
+		if ( kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance) > 0 ){
 			for (size_t i = 0; i < pointIdxNKNSearch.size (); ++i){
 				std::cout << "    "  <<   cloud->points[ pointIdxNKNSearch[i] ].x 
 					<< ", " << cloud->points[ pointIdxNKNSearch[i] ].y 
@@ -170,18 +196,17 @@ void kd_tree(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, int x=1, int y=1, int z
 			<< ") with radius=" << radius << std::endl;
 
 
-		if ( kdtree.radiusSearch (searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0 )
-		{
-			for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i)
+		if ( kdtree.radiusSearch (searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0 ){
+			for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i){
 				std::cout << "    "  <<   cloud->points[ pointIdxRadiusSearch[i] ].x 
 					<< ", " << cloud->points[ pointIdxRadiusSearch[i] ].y 
 					<< ", " << cloud->points[ pointIdxRadiusSearch[i] ].z 
 					<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
-		}
+      }
     std::cout << "points: " << pointIdxRadiusSearch.size() << std::endl;
-	}
+	  }
+  }
 }
-
 
 /****************K POINTS & RADIUS POINTS*****************************/
 void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
@@ -192,28 +217,47 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
 	kdtree.setInputCloud (cloud);
 
-	pcl::PointXYZ searchPoint;
+	pcl::PointXYZ search_point;
 
-	std::cout<< "Enter a K value: " <<std::endl;
-	int K = 0;
-	std::cin >> K;
-
+  int outer_k = 100;
+  int inner_k = 10;
 	// K nearest neighbor search
-	std::vector<int> pointIdxNKNSearch(K);
-	std::vector<float> pointNKNSquaredDistance(K);
+	std::vector<int> k_search(outer_k);
+	std::vector<float> squared_dist(outer_k);
+  std::vector<int> inner_k_search(inner_k);
+	std::vector<float> inner_squared_dist(inner_k);
+  
+  int node_counter = 0;
+  Node node_points[cloud->points.size()];
 
   for(int j = 0; j < cloud->points.size(); j++){
-    searchPoint = cloud->points[j];
-    std::cout<<"\n\n"<<searchPoint<<"\n\n"<<std::endl;
-    if ( kdtree.nearestKSearch (searchPoint, K, pointIdxNKNSearch, pointNKNSquaredDistance) > 0 )
-    {
-      for (size_t i = 0; i < pointIdxNKNSearch.size (); ++i){
-        std::cout << "    "  <<   cloud->points[ pointIdxNKNSearch[i] ].x 
-          << ", " << cloud->points[ pointIdxNKNSearch[i] ].y 
-          << ", " << cloud->points[ pointIdxNKNSearch[i] ].z 
-          << " (squared distance: " << pointNKNSquaredDistance[i] << ")" << std::endl; 
+    search_point = cloud->points[j];
+    Node current_node = node_points[node_counter++];
+    current_node.set_node(search_point);
+    std::cout<<"\n\n"<<search_point<<"\n\n"<<std::endl;
+    if ( kdtree.nearestKSearch (search_point, outer_k, k_search, squared_dist) > 0 ){
+      std::cout<<"if 1"<<std::endl;
+      for (size_t i = 0; i < k_search.size (), current_node.counter < 10; i++){
+        std::cout<<"for 1"<<std::endl;
+        bool contains_point = false;
+        pcl::PointXYZ neighbor = cloud->points[k_search[i]];
+        if( kdtree.nearestKSearch(neighbor, inner_k , inner_k_search, inner_squared_dist) > 0 ){
+          std::cout<<"if 2"<<std::endl;
+          for (size_t k = 0; k < inner_k_search.size(); k++){
+            std::cout<<"for 2"<<std::endl;
+            pcl::PointXYZ neigh_bound = cloud->points[inner_k_search[k]];
+            if (search_point.x == neigh_bound.x && search_point.y == neigh_bound.y && search_point.z == neigh_bound.z){
+              contains_point = true;
+            } 
+          }
+        }
+        if(contains_point){
+          std::cout<<"contains point"<<std::endl;
+          current_node.add_neighbor(neighbor);
+        }
       }
     }
+    //Angle Criterion
   }
 
 float p1[3] = {1,1,1}; //said point 1
@@ -264,32 +308,6 @@ void visualize(){
 	}
 }
 
-class Node{
-  public:
-    int x;
-    int y;
-    int z;
-    int counter;
-    Node();
-    Node *neighbors[10];
-    void setXYZ(int c1, int c2, int c3);
-    void add_neighbor(Node neighbor);
-};
-
-Node::Node(){
-  counter = 0;
-}
-
-void Node::setXYZ(int c1, int c2, int c3){
-  x = c1;
-  y = c2;
-  z = c3;
-}
-
-void Node::add_neighbor(Node neighbor){
-  std::cout<<neighbors[counter]<<std::endl;
-  *neighbors[counter++] = neighbor;
-}
 
 /*****************************MAIN************************************/
 int main (int argc, char** argv)
