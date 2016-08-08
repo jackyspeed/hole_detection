@@ -17,17 +17,21 @@
 
 class Node{
   public:
-    int x;
-    int y;
-    int z;
+    float x;
+    float y;
+    float z;
     int prob;
     int counter;
-    void set_node(pcl::PointXYZ ptr);
+    Node(pcl::PointXYZ ptr);
+    Node();
     Node *neighbors[10];
+    void print_neighbors();
     void add_neighbor(pcl::PointXYZ pt);
 };
 
-void Node::set_node(pcl::PointXYZ point){ 
+Node::Node(){}
+
+Node::Node(pcl::PointXYZ point){ 
   counter = 0;
   x = point.x;
   std::cout<<"set node"<<std::endl;
@@ -37,10 +41,15 @@ void Node::set_node(pcl::PointXYZ point){
 }
 
 void Node::add_neighbor(pcl::PointXYZ pt){
-  Node temp;
-  temp.set_node(pt);
-  std::cout<<"wtf is the problem"<<std::endl;
-  *neighbors[counter++] = temp;
+  Node temp(pt);
+  std::cout<<" after set node"<<std::endl;
+  neighbors[counter++] = &temp;
+}
+
+void Node::print_neighbors(){
+  for(int i = 0; i < counter-1; i++){
+    std::cout<<neighbors[i]->x<<" "<<neighbors[i]->y<<" "<<neighbors[i]->z<<std::endl;
+  }
 }
 
 // prints help menu
@@ -227,24 +236,19 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
   std::vector<int> inner_k_search(inner_k);
 	std::vector<float> inner_squared_dist(inner_k);
   
-  int node_counter = 0;
   Node node_points[cloud->points.size()];
 
-  for(int j = 0; j < cloud->points.size(); j++){
+  for(int j = 0; j < 10; j++){
     search_point = cloud->points[j];
-    Node current_node = node_points[node_counter++];
-    current_node.set_node(search_point);
+    Node current_node(search_point);
+    node_points[j] = current_node; 
     std::cout<<"\n\n"<<search_point<<"\n\n"<<std::endl;
     if ( kdtree.nearestKSearch (search_point, outer_k, k_search, squared_dist) > 0 ){
-      std::cout<<"if 1"<<std::endl;
-      for (size_t i = 0; i < k_search.size (), current_node.counter < 10; i++){
-        std::cout<<"for 1"<<std::endl;
+      for (size_t i = 0; i < k_search.size() && current_node.counter < 10; i++){
         bool contains_point = false;
         pcl::PointXYZ neighbor = cloud->points[k_search[i]];
         if( kdtree.nearestKSearch(neighbor, inner_k , inner_k_search, inner_squared_dist) > 0 ){
-          std::cout<<"if 2"<<std::endl;
           for (size_t k = 0; k < inner_k_search.size(); k++){
-            std::cout<<"for 2"<<std::endl;
             pcl::PointXYZ neigh_bound = cloud->points[inner_k_search[k]];
             if (search_point.x == neigh_bound.x && search_point.y == neigh_bound.y && search_point.z == neigh_bound.z){
               contains_point = true;
@@ -253,11 +257,17 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
         }
         if(contains_point){
           std::cout<<"contains point"<<std::endl;
-          current_node.add_neighbor(neighbor);
+          node_points[j].add_neighbor(neighbor);
+          std::cout<<"number of neighbors"<<current_node.counter<<std::endl;
         }
       }
     }
     //Angle Criterion
+  }
+
+  for(int i  = 0; i < 10; i++){
+    node_points[i].print_neighbors();
+    std::cout<<"<>"<<std::endl;
   }
 
 float p1[3] = {1,1,1}; //said point 1
