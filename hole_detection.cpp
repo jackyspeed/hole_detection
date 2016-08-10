@@ -15,39 +15,43 @@
 #include <ctime>
 #include <math.h>
 
+#define PI 3.14159265
+
 class Node{
   public:
     float x;
     float y;
     float z;
     int prob;
-    int counter;
+    int n_count;
     Node(pcl::PointXYZ ptr);
     Node();
-    Node *neighbors[10];
+    Node* neighbors[10];
     void print_neighbors();
     void add_neighbor(pcl::PointXYZ pt);
+    void decrement_counter();
 };
 
 Node::Node(){}
 
 Node::Node(pcl::PointXYZ point){ 
-  counter = 0;
+  n_count = 0;
   x = point.x;
-  std::cout<<"set node"<<std::endl;
   y = point.y;
   z = point.z;
   prob = 0;
 }
 
 void Node::add_neighbor(pcl::PointXYZ pt){
-  Node temp(pt);
-  std::cout<<" after set node"<<std::endl;
-  neighbors[counter++] = &temp;
+  neighbors[n_count++] = new Node(pt);
+}
+
+void Node::decrement_counter(){
+  n_count--;
 }
 
 void Node::print_neighbors(){
-  for(int i = 0; i < counter-1; i++){
+  for(int i = 0; i < n_count; i++){
     std::cout<<neighbors[i]->x<<" "<<neighbors[i]->y<<" "<<neighbors[i]->z<<std::endl;
   }
 }
@@ -105,15 +109,14 @@ void normals(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
 // finds angle between two three dimensional vectors
 float angle_between_vectors (float *nu, float *nv){
-	float l1, l2, angle, param ;
-	l1 = sqrt(nu[0]*nu[0] + nu[1]*nu[1] + nu[2]*nu[2]) ;
-	l2 = sqrt(nv[0]*nv[0] + nv[1]*nv[1] + nv[2]*nv[2]) ;
-	float dot ;
-	dot = nu[0]*nv[0] + nu[1]*nv[1] + nu[2]*nv[2] ;
-	param = dot/(l1*l2) ;
+	float l1 = sqrt(nu[0]*nu[0] + nu[1]*nu[1] + nu[2]*nu[2]);
+	float l2 = sqrt(nv[0]*nv[0] + nv[1]*nv[1] + nv[2]*nv[2]);
+	float dot = nu[0]*nv[0] + nu[1]*nv[1] + nu[2]*nv[2];
+	float param = dot/(l1*l2);
 	//if (param < 0)
-	//param = -(param) ;
-	angle = std::acos(param) ;
+	//param = -(param);
+	float angle = std::asin(param);
+  angle = fabs(angle*180/PI);
 	angle = floor(angle*100 + 0.5)/100 ;  // round off to two decimal places
 	return angle ;
 }
@@ -217,6 +220,10 @@ void kd_tree(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, int x=1, int y=1, int z
   }
 }
 
+bool is_equal(pcl::PointXYZ first, pcl::PointXYZ second){
+  return first.x == second.x && first.y == second.y && first.z == second.z;
+}
+
 /****************K POINTS & RADIUS POINTS*****************************/
 void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
@@ -236,39 +243,62 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
   std::vector<int> inner_k_search(inner_k);
 	std::vector<float> inner_squared_dist(inner_k);
   
-  Node node_points[cloud->points.size()];
+  Node node_points[10];
 
   for(int j = 0; j < 10; j++){
     search_point = cloud->points[j];
-    Node current_node(search_point);
-    node_points[j] = current_node; 
-    std::cout<<"\n\n"<<search_point<<"\n\n"<<std::endl;
+    node_points[j] = Node(search_point);
     if ( kdtree.nearestKSearch (search_point, outer_k, k_search, squared_dist) > 0 ){
-      for (size_t i = 0; i < k_search.size() && current_node.counter < 10; i++){
+      for (int i = 0; i < k_search.size() && node_points[j].n_count < 10; i++){
         bool contains_point = false;
         pcl::PointXYZ neighbor = cloud->points[k_search[i]];
-        if( kdtree.nearestKSearch(neighbor, inner_k , inner_k_search, inner_squared_dist) > 0 ){
-          for (size_t k = 0; k < inner_k_search.size(); k++){
+        if( kdtree.nearestKSearch(neighbor, inner_k , inner_k_search, inner_squared_dist) > 0 && !is_equal(search_point, neighbor)){
+          for (int k = 0; k < inner_k_search.size(); k++){
             pcl::PointXYZ neigh_bound = cloud->points[inner_k_search[k]];
-            if (search_point.x == neigh_bound.x && search_point.y == neigh_bound.y && search_point.z == neigh_bound.z){
+            if (is_equal(search_point,neigh_bound)){
               contains_point = true;
             } 
           }
         }
         if(contains_point){
-          std::cout<<"contains point"<<std::endl;
           node_points[j].add_neighbor(neighbor);
-          std::cout<<"number of neighbors"<<current_node.counter<<std::endl;
         }
       }
-    }
-    //Angle Criterion
-  }
+      node_points[j].decrement_counter();
+      float v1[3];
+      float v2[3];
+      float max = 0;
+      float angle = 0;
+      Node vertex = node_points[j];
+      Node start = *vertex.neighbors[0];
+      Node end = *vertex.neighbors[1];
+      v1[0] = current.x - vertex.x;
+      v1[1] = current.y - vertex.y;
+      v1[2] = current.z - vertex.z;
+      int angles[vertex.n_count];
+      int a_index = 0;
+      for(int i = 0; i < vertex.n_count-1; i++, next = *vertex.neighbors[i+1]){
+        v2[0] = next.x - vertex.x;
+        v2[1] = next.y - vertex.y;
+        v2[2] = next.z - vertex.z;
+        angle = angle_between_vectors(v1,v2);
+        angles[a_index] = angle;
+        a_index++;
+        if(angle > max){
+          max = angle;
+        }
+      }
+      for(int i = 0; i < a_index-1; i ++){
 
-  for(int i  = 0; i < 10; i++){
-    node_points[i].print_neighbors();
-    std::cout<<"<>"<<std::endl;
+      }
+      vertex.prob = max;
+      node_points[j] = vertex;
+    }
+    std::cout<<"\n\n"<<search_point<<"\n\n"<<std::endl;
+    std::cout<<"prob"<<node_points[j].prob<<std::endl;
+    node_points[j].print_neighbors();
   }
+  
 
 float p1[3] = {1,1,1}; //said point 1
 float p2[3] = {2,2,2}; //said point 2 
