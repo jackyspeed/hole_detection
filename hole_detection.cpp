@@ -24,14 +24,14 @@ class Node{
     float z;
     int prob;
     int n_count;
-    Node(pcl::PointXYZ ptr);
+    Node(pcl::PointXYZ ptr, int id_num);
     Node();
     Node* neighbors[10];
     void print_neighbors();
     void add_neighbor(pcl::PointXYZ pt);
     void decrement_counter();
-    bool bound_point = false;
-    bool pos_bound_point = false;
+    bool bound_point;
+    bool pos_bound_point;
     int id;
 };
 
@@ -44,10 +44,12 @@ Node::Node(pcl::PointXYZ point, int id_num){
   z = point.z;
   prob = 0;
   id = id_num;
+  pos_bound_point = false;
+  bound_point = false;
 }
 
 void Node::add_neighbor(pcl::PointXYZ pt){
-  neighbors[n_count++] = new Node(pt);
+  neighbors[n_count++] = new Node(pt, -2);
 }
 
 void Node::decrement_counter(){
@@ -55,9 +57,7 @@ void Node::decrement_counter(){
 }
 
 void Node::print_neighbors(){
-  std::cout<<"count in print "<<n_count<<std::endl;
   for(int i = 0; i < n_count; i++){
-    std::cout<<neighbors[i]->x<<", "<<neighbors[i]->y<<", "<<neighbors[i]->z<<std::endl;
   }
 }
 
@@ -131,7 +131,6 @@ float angle_between_vectors (float *nu, float *nv){
   else{
     signed_value = 1;
   }
-  std::cout<<"sval "<<signed_value<<std::endl;
 	return angle ;
 }
 
@@ -238,6 +237,43 @@ bool is_equal(pcl::PointXYZ first, pcl::PointXYZ second){
   return first.x == second.x && first.y == second.y && first.z == second.z;
 }
 
+// Recursive function that searches for boundary points
+bool is_boundary_point(Node node, int id){
+  node.pos_bound_point = true;
+  int possible_nodes[node.n_count]; //slightly inefficient, but we don't know how many will be boundary points
+  int count = 0;
+  int boundary_count = 0;
+  for(int i = 0; i < node.n_count; i++){
+    if(node.neighbors[i]->id != id){
+      if(node.neighbors[i]->bound_point){
+        //boundary_count++;
+        return true;
+      }
+      if(node.neighbors[i]->pos_bound_point){
+        return true;
+      }
+      if(node.neighbors[i]->prob > 90){
+        possible_nodes[count] = i;
+        count++;
+      }
+    }
+  }
+  if(boundary_count > 1){
+    return true;
+  }
+  if(count > 1){
+    for(int j = 0; j < count; j++){
+      if(is_boundary_point(*node.neighbors[possible_nodes[count]], node.id)){
+        return true;
+      }
+    }
+    node.pos_bound_point = false;
+    return false;
+  }
+  node.pos_bound_point = false;
+  return false;
+}
+
 /****************K POINTS & RADIUS POINTS*****************************/
 void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
@@ -257,8 +293,8 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
   std::vector<int> inner_k_search(inner_k);
 	std::vector<float> inner_squared_dist(inner_k);
   
-  Node node_points[10];
-  for(int j = 0; j < 10; j++){
+  Node node_points[cloud->points.size()];
+  for(int j = 0; j < cloud->points.size(); j++){
     search_point = cloud->points[j];
     node_points[j] = Node(search_point, j+1);
     if ( kdtree.nearestKSearch (search_point, outer_k, k_search, squared_dist) > 0 ){
@@ -324,48 +360,12 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
  
   // Iterating through points to see which ones satisfy the angle criterion and have two neighboring 
   // neighbor points
-  for(int j = 0; j < 10; j++){
+  for(int j = 0; j < cloud->points.size(); j++){
     if(!node_points[j].bound_point){
-      node_points.bound_point = is_boundary_point(node_points[j], -1);
+      node_points[j].bound_point = is_boundary_point(node_points[j], -1);
     }
+    std::cout<<"boundary point: "<<node_points[j].bound_point<<std::endl;
   }
-}
-
-// Recursive function that searches for boundary points
-bool is_boundary_point(Node node, int id){
-  node.pos_bound_point = true;
-  int possible_nodes[node.n_count]; //slightly inefficient, but we don't know how many will be boundary points
-  int count = 0;
-  int boudary_count = 0;
-  for(int i = 0; i < node.n_count; i++){
-    if(node.neighbors[i].id != id){
-      if(node.neighbors[i].bound_point){
-        //boundary_count++;
-        return true;
-      }
-      if(node.neighbors[i].pos_bound_point){
-        return true;
-      }
-      if(node.neighbors[i].prob > 90){
-        possible_node[count] = i;
-        count++;
-      }
-    }
-  }
-  if(boundary_count > 1){
-    return true;
-  }
-  if(count > 1){
-    for(int j = 0; j < count; j++){
-      if(is_boundary_point(node_points[possible_nodes[count]], node.id)){
-        return true;
-      }
-    }
-    node.pos_bound_point = false;
-    return false;
-  }
-  node.pos_bound_point = false;
-  return false
 }
 
 //function needed for viewing pcl
