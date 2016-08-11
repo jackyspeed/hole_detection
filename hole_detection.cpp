@@ -32,16 +32,18 @@ class Node{
     void decrement_counter();
     bool bound_point = false;
     bool pos_bound_point = false;
+    int id;
 };
 
 Node::Node(){}
 
-Node::Node(pcl::PointXYZ point){ 
+Node::Node(pcl::PointXYZ point, int id_num){ 
   n_count = 0;
   x = point.x;
   y = point.y;
   z = point.z;
   prob = 0;
+  id = id_num;
 }
 
 void Node::add_neighbor(pcl::PointXYZ pt){
@@ -258,7 +260,7 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
   Node node_points[10];
   for(int j = 0; j < 10; j++){
     search_point = cloud->points[j];
-    node_points[j] = Node(search_point);
+    node_points[j] = Node(search_point, j+1);
     if ( kdtree.nearestKSearch (search_point, outer_k, k_search, squared_dist) > 0 ){
       for (int i = 0; i < k_search.size() && node_points[j].n_count < 10; i++){
         bool contains_point = false;
@@ -320,34 +322,34 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
     std::cout<<"\n\n"<<std::endl;
   }
  
-  //iterating through points, if a point has two neighboring boundary points
-  //then it itself is a boundary point
-
+  // Iterating through points to see which ones satisfy the angle criterion and have two neighboring 
+  // neighbor points
   for(int j = 0; j < 10; j++){
-    node_points.bound_point = is_boundary_point(node_points[j]);
+    if(!node_points[j].bound_point){
+      node_points.bound_point = is_boundary_point(node_points[j], -1);
+    }
   }
-float p1[3] = {1,1,1}; //said point 1
-float p2[3] = {2,2,2}; //said point 2 
-
-//angle_between_vector(p1,p2);
-
-float dist = sqrt(pow(p2[0]-p1[0],2.0) + pow(p2[1]-p1[1],2.0) + pow(p2[2]-p1[2],2.0));
-/**********************************************************************/
-
 }
 
-bool is_boundary_point(Node node){
+// Recursive function that searches for boundary points
+bool is_boundary_point(Node node, int id){
   node.pos_bound_point = true;
   int possible_nodes[node.n_count]; //slightly inefficient, but we don't know how many will be boundary points
   int count = 0;
   int boudary_count = 0;
   for(int i = 0; i < node.n_count; i++){
-    if(node.neighbors[i].bound_point){
-      boundary_count++;
-    }
-    if(node.neighbors[i].prob > 90){
-      possible_node[count] = i;
-      count++;
+    if(node.neighbors[i].id != id){
+      if(node.neighbors[i].bound_point){
+        //boundary_count++;
+        return true;
+      }
+      if(node.neighbors[i].pos_bound_point){
+        return true;
+      }
+      if(node.neighbors[i].prob > 90){
+        possible_node[count] = i;
+        count++;
+      }
     }
   }
   if(boundary_count > 1){
@@ -355,9 +357,14 @@ bool is_boundary_point(Node node){
   }
   if(count > 1){
     for(int j = 0; j < count; j++){
-      
+      if(is_boundary_point(node_points[possible_nodes[count]], node.id)){
+        return true;
+      }
     }
+    node.pos_bound_point = false;
+    return false;
   }
+  node.pos_bound_point = false;
   return false
 }
 
