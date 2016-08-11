@@ -51,6 +51,7 @@ void Node::decrement_counter(){
 }
 
 void Node::print_neighbors(){
+  std::cout<<"count in print "<<n_count<<std::endl;
   for(int i = 0; i < n_count; i++){
     std::cout<<neighbors[i]->x<<" "<<neighbors[i]->y<<" "<<neighbors[i]->z<<std::endl;
   }
@@ -109,6 +110,7 @@ void normals(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
 // finds angle between two three dimensional vectors
 float angle_between_vectors (float *nu, float *nv){
+  float signed_value = (nu[1]*nv[2]-nu[2]*nv[1]) + (nu[2]*nv[0]-nu[0]*nv[2]) + (nu[0]*nv[2]-nu[1]*nv[0])
 	float l1 = sqrt(nu[0]*nu[0] + nu[1]*nu[1] + nu[2]*nu[2]);
 	float l2 = sqrt(nv[0]*nv[0] + nv[1]*nv[1] + nv[2]*nv[2]);
 	float dot = nu[0]*nv[0] + nu[1]*nv[1] + nu[2]*nv[2];
@@ -264,39 +266,46 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
           node_points[j].add_neighbor(neighbor);
         }
       }
-      node_points[j].decrement_counter();
       float v1[3];
       float v2[3];
       float max = 0;
       float angle = 0;
       Node vertex = node_points[j];
       Node start = *vertex.neighbors[0];
-      Node end = *vertex.neighbors[1];
-      v1[0] = current.x - vertex.x;
-      v1[1] = current.y - vertex.y;
-      v1[2] = current.z - vertex.z;
+      Node next = *vertex.neighbors[1];
+      v1[0] = start.x - vertex.x;
+      v1[1] = start.y - vertex.y;
+      v1[2] = start.z - vertex.z;
       int angles[vertex.n_count];
       int a_index = 0;
-      for(int i = 0; i < vertex.n_count-1; i++, next = *vertex.neighbors[i+1]){
+      std::cout<<"count "<<vertex.n_count<<std::endl;
+      for(int i = 0; i < vertex.n_count-1; i++){
+        std::cout<<"run"<<std::endl;
+        next = *vertex.neighbors[i+1];
         v2[0] = next.x - vertex.x;
         v2[1] = next.y - vertex.y;
         v2[2] = next.z - vertex.z;
         angle = angle_between_vectors(v1,v2);
         angles[a_index] = angle;
-        a_index++;
-        if(angle > max){
-          max = angle;
+        for(int k = a_index; k-1 >=0; k--){
+          if(angles[k] < angles[k-1]){
+            int temp = angles[k];
+            angles[k] = angles[k-1];
+            angles[k-1] = temp;
+          }
         }
+        a_index++; 
       }
-      for(int i = 0; i < a_index-1; i ++){
-
+      for(int i = 0; i < a_index; i ++){
+        std::cout<<"angle "<<angles[i]<<std::endl;
       }
       vertex.prob = max;
       node_points[j] = vertex;
     }
-    std::cout<<"\n\n"<<search_point<<"\n\n"<<std::endl;
+    std::cout<<"\n"<<search_point<<"\n"<<std::endl;
     std::cout<<"prob"<<node_points[j].prob<<std::endl;
     node_points[j].print_neighbors();
+    std::cout<<"\n\n"<<std::endl;
   }
   
 
