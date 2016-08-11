@@ -30,6 +30,8 @@ class Node{
     void print_neighbors();
     void add_neighbor(pcl::PointXYZ pt);
     void decrement_counter();
+    bool bound_point = false;
+    bool pos_bound_point = false;
 };
 
 Node::Node(){}
@@ -53,7 +55,7 @@ void Node::decrement_counter(){
 void Node::print_neighbors(){
   std::cout<<"count in print "<<n_count<<std::endl;
   for(int i = 0; i < n_count; i++){
-    std::cout<<neighbors[i]->x<<" "<<neighbors[i]->y<<" "<<neighbors[i]->z<<std::endl;
+    std::cout<<neighbors[i]->x<<", "<<neighbors[i]->y<<", "<<neighbors[i]->z<<std::endl;
   }
 }
 
@@ -110,16 +112,24 @@ void normals(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
 // finds angle between two three dimensional vectors
 float angle_between_vectors (float *nu, float *nv){
-  float signed_value = (nu[1]*nv[2]-nu[2]*nv[1]) + (nu[2]*nv[0]-nu[0]*nv[2]) + (nu[0]*nv[2]-nu[1]*nv[0])
+  float signed_value = (nu[1]*nv[2]-nu[2]*nv[1]) + (nu[2]*nv[0]-nu[0]*nv[2]) + (nu[0]*nv[2]-nu[1]*nv[0]);
 	float l1 = sqrt(nu[0]*nu[0] + nu[1]*nu[1] + nu[2]*nu[2]);
 	float l2 = sqrt(nv[0]*nv[0] + nv[1]*nv[1] + nv[2]*nv[2]);
 	float dot = nu[0]*nv[0] + nu[1]*nv[1] + nu[2]*nv[2];
 	float param = dot/(l1*l2);
 	//if (param < 0)
 	//param = -(param);
-	float angle = std::asin(param);
-  angle = fabs(angle*180/PI);
+	float angle = std::acos(param);
+  angle = angle*180/PI;
 	angle = floor(angle*100 + 0.5)/100 ;  // round off to two decimal places
+  if(signed_value < 0){
+    signed_value = -1;
+    angle = 360-angle;
+  }
+  else{
+    signed_value = 1;
+  }
+  std::cout<<"sval "<<signed_value<<std::endl;
 	return angle ;
 }
 
@@ -246,7 +256,6 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 	std::vector<float> inner_squared_dist(inner_k);
   
   Node node_points[10];
-
   for(int j = 0; j < 10; j++){
     search_point = cloud->points[j];
     node_points[j] = Node(search_point);
@@ -276,11 +285,9 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
       v1[0] = start.x - vertex.x;
       v1[1] = start.y - vertex.y;
       v1[2] = start.z - vertex.z;
-      int angles[vertex.n_count];
+      float angles[vertex.n_count];
       int a_index = 0;
-      std::cout<<"count "<<vertex.n_count<<std::endl;
       for(int i = 0; i < vertex.n_count-1; i++){
-        std::cout<<"run"<<std::endl;
         next = *vertex.neighbors[i+1];
         v2[0] = next.x - vertex.x;
         v2[1] = next.y - vertex.y;
@@ -296,19 +303,29 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
         }
         a_index++; 
       }
-      for(int i = 0; i < a_index; i ++){
-        std::cout<<"angle "<<angles[i]<<std::endl;
+      angles[a_index] = 360;
+      float difference;
+      max = angles[0];
+      for(int i = 0; i < a_index; i++){
+        difference = angles[i+1] - angles[i];
+        if(difference > max){
+          max = difference;
+        }
       }
       vertex.prob = max;
       node_points[j] = vertex;
     }
     std::cout<<"\n"<<search_point<<"\n"<<std::endl;
-    std::cout<<"prob"<<node_points[j].prob<<std::endl;
     node_points[j].print_neighbors();
     std::cout<<"\n\n"<<std::endl;
   }
-  
+ 
+  //iterating through points, if a point has two neighboring boundary points
+  //then it itself is a boundary point
 
+  for(int j = 0; j < 10; j++){
+    node_points.bound_point = is_boundary_point(node_points[j]);
+  }
 float p1[3] = {1,1,1}; //said point 1
 float p2[3] = {2,2,2}; //said point 2 
 
@@ -317,6 +334,31 @@ float p2[3] = {2,2,2}; //said point 2
 float dist = sqrt(pow(p2[0]-p1[0],2.0) + pow(p2[1]-p1[1],2.0) + pow(p2[2]-p1[2],2.0));
 /**********************************************************************/
 
+}
+
+bool is_boundary_point(Node node){
+  node.pos_bound_point = true;
+  int possible_nodes[node.n_count]; //slightly inefficient, but we don't know how many will be boundary points
+  int count = 0;
+  int boudary_count = 0;
+  for(int i = 0; i < node.n_count; i++){
+    if(node.neighbors[i].bound_point){
+      boundary_count++;
+    }
+    if(node.neighbors[i].prob > 90){
+      possible_node[count] = i;
+      count++;
+    }
+  }
+  if(boundary_count > 1){
+    return true;
+  }
+  if(count > 1){
+    for(int j = 0; j < count; j++){
+      
+    }
+  }
+  return false
 }
 
 //function needed for viewing pcl
