@@ -17,6 +17,12 @@
 
 #define PI 3.14159265
 
+/*
+ * Contains a point in point cloud and stores neighbor nodes in a pointer
+ * array. Various boolean values mark whether the node instance has been 
+ * checked (in calculate_hole). Finally, it holds a value to indicate 
+ * the probability it is a boundary point of a hole
+ */
 class Node{
   public:
     float x;
@@ -24,32 +30,34 @@ class Node{
     float z;
     int prob;
     int n_count;
-    Node(pcl::PointXYZ ptr, int id_num);
+    int id;
+    bool checked;
+    bool bound_point;
+    bool pos_bound_point;
+    Node(pcl::PointXYZ ptr, int id_number);
     Node();
     Node* neighbors[10];
     void print_neighbors();
-    void add_neighbor(pcl::PointXYZ pt);
+    void add_neighbor(Node* neighbor);
     void decrement_counter();
-    bool bound_point;
-    bool pos_bound_point;
-    int id;
 };
 
 Node::Node(){}
 
-Node::Node(pcl::PointXYZ point, int id_num){ 
+Node::Node(pcl::PointXYZ point, int id_number){ 
   n_count = 0;
   x = point.x;
   y = point.y;
   z = point.z;
   prob = 0;
-  id = id_num;
   pos_bound_point = false;
   bound_point = false;
+  checked = false;
+  id = id_number;
 }
 
-void Node::add_neighbor(pcl::PointXYZ pt){
-  neighbors[n_count++] = new Node(pt, -2);
+void Node::add_neighbor(Node* neighbor){
+  neighbors[n_count++] = neighbor;
 }
 
 void Node::decrement_counter(){
@@ -58,6 +66,7 @@ void Node::decrement_counter(){
 
 void Node::print_neighbors(){
   for(int i = 0; i < n_count; i++){
+    std::cout<<neighbors[i]->x<<", "<<neighbors[i]->y<<", "<<neighbors[i]->z<<std::endl;
   }
 }
 
@@ -233,103 +242,169 @@ void kd_tree(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, int x=1, int y=1, int z
   }
 }
 
-bool is_equal(pcl::PointXYZ first, pcl::PointXYZ second){
-  return first.x == second.x && first.y == second.y && first.z == second.z;
+// compares nodes (i.e. the points they contain)
+bool is_equal(Node* first, Node* second){
+  return first->x == second->x && first->y == second->y && first->z == second->z;
 }
 
 // Recursive function that searches for boundary points
-bool is_boundary_point(Node node, int id){
-  node.pos_bound_point = true;
-  int possible_nodes[node.n_count]; //slightly inefficient, but we don't know how many will be boundary points
+bool is_boundary_point(Node* before, Node* node){
+ 
+  std::cout<<"bound"<<std::endl;
+  //generally not necessary, but a safecheck for a point being checked without a
+  //parent node that would've checked its maximum probability before it called
+  //this function
+  
+  if(node->prob < 90){
+    return false;
+  }
+  if(node->checked){
+    if(node->pos_bound_point || node->bound_point){
+      return true;
+    }
+    if(!node->pos_bound_point){
+      return false;
+    }
+  }
+
+  // pointed is now checked and a possible boundary point
+  node->pos_bound_point = true;
+  node->checked = true;
+
+  // array for indexes of possible boundary points of the current node we are
+  // examining
+  int possible_nodes[node->n_count]; // slightly inefficient, but we don't know how many will be boundary points
   int count = 0;
   int boundary_count = 0;
-  for(int i = 0; i < node.n_count; i++){
-    if(node.neighbors[i]->id != id){
-      if(node.neighbors[i]->bound_point){
-        //boundary_count++;
+
+  for(int i = 0; i < node->n_count; i++){
+
+    // if this point was called from calculate_hole and not recursively by this
+    // method itself, then we have to find two neighbor nodes that are boundary
+    // points in order for this to be a boundary point
+    if(before == 0 || !is_equal(before, node->neighbors[i])){ // 0 is passed from calculate_hole, otherwise before will be pointer node calling function
+      if(node->neighbors[i]->bound_point){
+        if(before == 0){
+          boundary_count++;
+        }
+        else{
+          // if a bound point is encountered a hole must have been found
+          return true;
+        }
+        if(boundary_count > 1){
+          return true;
+        }
+      }
+      if(node->neighbors[i]->pos_bound_point){
+        // if this function was called recursively then a circle (hole) has
+        // been iterated and you can return true so all nodes become boundary
+        // points
         return true;
       }
-      if(node.neighbors[i]->pos_bound_point){
-        return true;
-      }
-      if(node.neighbors[i]->prob > 90){
+      // add to array of possible boundary points if it has a max neighbor angle
+      // of greater tahn 90
+      if(node->neighbors[i]->prob > 90){
         possible_nodes[count] = i;
         count++;
       }
     }
   }
-  if(boundary_count > 1){
-    return true;
-  }
   if(count > 1){
     for(int j = 0; j < count; j++){
-      if(is_boundary_point(*node.neighbors[possible_nodes[count]], node.id)){
+      // check each possible point with recursive function, if true is returned
+      // that means a hole was iterated (found)
+      if(is_boundary_point(node, node->neighbors[possible_nodes[count]])){
         return true;
       }
     }
-    node.pos_bound_point = false;
+    // if we get here then for future reference mark this point as not a
+    // candidate for a boundary point
+    node->pos_bound_point = false;
     return false;
   }
-  node.pos_bound_point = false;
+  // same as above
+  node->pos_bound_point = false;
   return false;
 }
 
 /****************K POINTS & RADIUS POINTS*****************************/
 void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
 
+  // creating tree and linking cloud of points to it
 	srand (time (NULL));
-
 	pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
-
 	kdtree.setInputCloud (cloud);
 
-	pcl::PointXYZ search_point;
-
+  // Number of possible nearest points found by each search.
+  // That is we search for 100 closest points to each points in cloud until we
+  // find 10 neighbors (or we iterate through entire cloud).
+  // for each neighbor in question we search their 10 closest neighbors too see
+  // if the original point is in that set
   int outer_k = 100;
   int inner_k = 10;
+
 	// K nearest neighbor search
 	std::vector<int> k_search(outer_k);
 	std::vector<float> squared_dist(outer_k);
   std::vector<int> inner_k_search(inner_k);
 	std::vector<float> inner_squared_dist(inner_k);
   
-  Node node_points[cloud->points.size()];
+  // array of pointers to nodes we will create for each point in cloud
+  Node* node_points[cloud->points.size()];
+
+  for(int h = 0; h < cloud->points.size(); h++){
+    node_points[h] = new Node(cloud->points[h], h);
+  }
+
+  // iterate through cloud..
   for(int j = 0; j < cloud->points.size(); j++){
-    search_point = cloud->points[j];
-    node_points[j] = Node(search_point, j+1);
-    if ( kdtree.nearestKSearch (search_point, outer_k, k_search, squared_dist) > 0 ){
-      for (int i = 0; i < k_search.size() && node_points[j].n_count < 10; i++){
+    Node* current = node_points[j];
+    
+    // finds and stores outer_k closest point and stored their indexes into the
+    // point cloud in an array k_search
+    if ( kdtree.nearestKSearch (cloud->points[j], outer_k, k_search, squared_dist) > 0 ){
+      
+      // iterate this until we find 10 viable neighbors or run out of points
+      for (int i = 0; i < k_search.size() && node_points[j]->n_count < 10; i++){
+        
         bool contains_point = false;
-        pcl::PointXYZ neighbor = cloud->points[k_search[i]];
-        if( kdtree.nearestKSearch(neighbor, inner_k , inner_k_search, inner_squared_dist) > 0 && !is_equal(search_point, neighbor)){
+        Node* neighbor = node_points[k_search[i]];
+        
+        if( kdtree.nearestKSearch(cloud->points[k_search[i]], inner_k , inner_k_search, inner_squared_dist) > 0 && !is_equal(current, neighbor)){
+          
           for (int k = 0; k < inner_k_search.size(); k++){
-            pcl::PointXYZ neigh_bound = cloud->points[inner_k_search[k]];
-            if (is_equal(search_point,neigh_bound)){
+            Node* neigh_bound = node_points[inner_k_search[k]];
+            
+            // if possible neighbor point contains the point in question
+            // (current) in its own neighborhood then it is in fact a neighbor
+            // point to current
+            if (is_equal(current, neigh_bound)){
               contains_point = true;
             } 
           }
         }
         if(contains_point){
-          node_points[j].add_neighbor(neighbor);
+          // add to currents neighborhood
+          current->add_neighbor(neighbor);
         }
       }
       float v1[3];
       float v2[3];
       float max = 0;
       float angle = 0;
-      Node vertex = node_points[j];
-      Node start = *vertex.neighbors[0];
-      Node next = *vertex.neighbors[1];
-      v1[0] = start.x - vertex.x;
-      v1[1] = start.y - vertex.y;
-      v1[2] = start.z - vertex.z;
-      float angles[vertex.n_count];
+      Node* vertex = node_points[j];
+      Node* start = vertex->neighbors[0];
+      Node* next = vertex->neighbors[1];
+      v1[0] = start->x - vertex->x;
+      v1[1] = start->y - vertex->y;
+      v1[2] = start->z - vertex->z;
+      float angles[vertex->n_count];
       int a_index = 0;
-      for(int i = 0; i < vertex.n_count-1; i++){
-        next = *vertex.neighbors[i+1];
-        v2[0] = next.x - vertex.x;
-        v2[1] = next.y - vertex.y;
-        v2[2] = next.z - vertex.z;
+      for(int i = 0; i < vertex->n_count-1; i++){
+        next = vertex->neighbors[i+1];
+        v2[0] = next->x - vertex->x;
+        v2[1] = next->y - vertex->y;
+        v2[2] = next->z - vertex->z;
         angle = angle_between_vectors(v1,v2);
         angles[a_index] = angle;
         for(int k = a_index; k-1 >=0; k--){
@@ -340,8 +415,8 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
           }
         }
         a_index++; 
+        angles[a_index] = 360;
       }
-      angles[a_index] = 360;
       float difference;
       max = angles[0];
       for(int i = 0; i < a_index; i++){
@@ -350,21 +425,20 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
           max = difference;
         }
       }
-      vertex.prob = max;
-      node_points[j] = vertex;
+      vertex->prob = max;
     }
-    std::cout<<"\n"<<search_point<<"\n"<<std::endl;
-    node_points[j].print_neighbors();
-    std::cout<<"\n\n"<<std::endl;
+    //std::cout<<"\n"<<cloud->points[j]<<"\n"<<std::endl;
+    //node_points[j]->print_neighbors();
+    std::cout<<"\n"<<std::endl;
   }
  
   // Iterating through points to see which ones satisfy the angle criterion and have two neighboring 
   // neighbor points
-  for(int j = 0; j < cloud->points.size(); j++){
-    if(!node_points[j].bound_point){
-      node_points[j].bound_point = is_boundary_point(node_points[j], -1);
+  for(int j = 0; j < 1; j++){
+    if(!node_points[j]->bound_point){
+      node_points[j]->bound_point = is_boundary_point(0, node_points[j]);
     }
-    std::cout<<"boundary point: "<<node_points[j].bound_point<<std::endl;
+    std::cout<<"boundary point: "<<node_points[j]->bound_point<<std::endl;
   }
 }
 
