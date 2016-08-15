@@ -2,7 +2,7 @@
 
 ###Description
 * Filters point cloud data and finds holes in the surface of the object. Written
-in C++.
+in C++ and CMake.
 
 ###Dependencies:
 * PCL Library
