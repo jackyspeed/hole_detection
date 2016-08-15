@@ -251,6 +251,7 @@ bool is_equal(Node* first, Node* second){
 bool is_boundary_point(Node* before, Node* node){
  
   std::cout<<"bound"<<std::endl;
+  std::cout<<"point"<<node->x<<", "<<node->y<<", "<<node->z<<std::endl;
   //generally not necessary, but a safecheck for a point being checked without a
   //parent node that would've checked its maximum probability before it called
   //this function
@@ -260,6 +261,7 @@ bool is_boundary_point(Node* before, Node* node){
   }
   if(node->checked){
     if(node->pos_bound_point || node->bound_point){
+      std::cout<<"or"<<std::endl;
       return true;
     }
     if(!node->pos_bound_point){
@@ -279,6 +281,7 @@ bool is_boundary_point(Node* before, Node* node){
 
   for(int i = 0; i < node->n_count; i++){
 
+    std::cout<<"neighbor"<<node->neighbors[i]->x<<", "<<node->neighbors[i]->y<<", "<<node->neighbors[i]->z<<std::endl;
     // if this point was called from calculate_hole and not recursively by this
     // method itself, then we have to find two neighbor nodes that are boundary
     // points in order for this to be a boundary point
@@ -289,9 +292,11 @@ bool is_boundary_point(Node* before, Node* node){
         }
         else{
           // if a bound point is encountered a hole must have been found
+          std::cout<<"boundpoint"<<std::endl;
           return true;
         }
         if(boundary_count > 1){
+          std::cout<<"bound count"<<std::endl;
           return true;
         }
       }
@@ -299,11 +304,12 @@ bool is_boundary_point(Node* before, Node* node){
         // if this function was called recursively then a circle (hole) has
         // been iterated and you can return true so all nodes become boundary
         // points
+        std::cout<<"pos_bound"<<std::endl;
         return true;
       }
       // add to array of possible boundary points if it has a max neighbor angle
-      // of greater tahn 90
-      if(node->neighbors[i]->prob > 90){
+      // of greater than 90
+      if(node->neighbors[i]->prob > 150){
         possible_nodes[count] = i;
         count++;
       }
@@ -313,7 +319,7 @@ bool is_boundary_point(Node* before, Node* node){
     for(int j = 0; j < count; j++){
       // check each possible point with recursive function, if true is returned
       // that means a hole was iterated (found)
-      if(is_boundary_point(node, node->neighbors[possible_nodes[count]])){
+      if(is_boundary_point(node, node->neighbors[possible_nodes[j]])){
         return true;
       }
     }
@@ -359,6 +365,7 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
   // iterate through cloud..
   for(int j = 0; j < cloud->points.size(); j++){
     Node* current = node_points[j];
+    std::cout<<"point "<<node_points[j]<<std::endl;
     
     // finds and stores outer_k closest point and stored their indexes into the
     // point cloud in an array k_search
@@ -395,11 +402,17 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
       Node* vertex = node_points[j];
       Node* start = vertex->neighbors[0];
       Node* next = vertex->neighbors[1];
+
+      // initial vector from point to first neighbor
       v1[0] = start->x - vertex->x;
       v1[1] = start->y - vertex->y;
       v1[2] = start->z - vertex->z;
+
+      // angles between vectors
       float angles[vertex->n_count];
       int a_index = 0;
+
+      // iterating over neighbor points
       for(int i = 0; i < vertex->n_count-1; i++){
         next = vertex->neighbors[i+1];
         v2[0] = next->x - vertex->x;
@@ -407,6 +420,7 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
         v2[2] = next->z - vertex->z;
         angle = angle_between_vectors(v1,v2);
         angles[a_index] = angle;
+        // sort angles as you add them to array
         for(int k = a_index; k-1 >=0; k--){
           if(angles[k] < angles[k-1]){
             int temp = angles[k];
@@ -419,8 +433,11 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
       }
       float difference;
       max = angles[0];
+
+      // find angles between vectors since they are in order already
       for(int i = 0; i < a_index; i++){
         difference = angles[i+1] - angles[i];
+        std::cout<<"difference "<<difference<<std::endl;
         if(difference > max){
           max = difference;
         }
@@ -432,14 +449,29 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
     std::cout<<"\n"<<std::endl;
   }
  
+  for(int p = 0; p < cloud->points.size(); p++){
+    std::ofstream new_file;
+  	new_file.open ("boundary.pcd", std::ios_base::app);
+    if(node_points[p]->prob > 120){
+      new_file << node_points[p]->x<<" "<<node_points[p]->y<<" "<<node_points[p]->z<<std::endl;
+    }
+    new_file.close();
+  }
+
+  /*
   // Iterating through points to see which ones satisfy the angle criterion and have two neighboring 
   // neighbor points
-  for(int j = 0; j < 1; j++){
-    if(!node_points[j]->bound_point){
-      node_points[j]->bound_point = is_boundary_point(0, node_points[j]);
-    }
+  for(int j = 0; j < cloud->points.size(); j++){
+    node_points[j]->bound_point = is_boundary_point(0, node_points[j]);
+    std::ofstream new_file;
+  	new_file.open ("boundary.pcd", std::ios_base::app);
     std::cout<<"boundary point: "<<node_points[j]->bound_point<<std::endl;
+    if(node_points[j]->bound_point){
+      new_file << node_points[j]->x<<" "<<node_points[j]->y<<" "<<node_points[j]->z<<std::endl;
+    }
+    new_file.close();
   }
+  */
 }
 
 //function needed for viewing pcl
