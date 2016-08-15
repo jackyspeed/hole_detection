@@ -256,7 +256,7 @@ bool is_boundary_point(Node* before, Node* node){
   //parent node that would've checked its maximum probability before it called
   //this function
   
-  if(node->prob < 90){
+  if(node->prob < 120){
     return false;
   }
   if(node->checked){
@@ -281,7 +281,6 @@ bool is_boundary_point(Node* before, Node* node){
 
   for(int i = 0; i < node->n_count; i++){
 
-    std::cout<<"neighbor"<<node->neighbors[i]->x<<", "<<node->neighbors[i]->y<<", "<<node->neighbors[i]->z<<std::endl;
     // if this point was called from calculate_hole and not recursively by this
     // method itself, then we have to find two neighbor nodes that are boundary
     // points in order for this to be a boundary point
@@ -292,11 +291,9 @@ bool is_boundary_point(Node* before, Node* node){
         }
         else{
           // if a bound point is encountered a hole must have been found
-          std::cout<<"boundpoint"<<std::endl;
           return true;
         }
         if(boundary_count > 1){
-          std::cout<<"bound count"<<std::endl;
           return true;
         }
       }
@@ -304,12 +301,11 @@ bool is_boundary_point(Node* before, Node* node){
         // if this function was called recursively then a circle (hole) has
         // been iterated and you can return true so all nodes become boundary
         // points
-        std::cout<<"pos_bound"<<std::endl;
         return true;
       }
       // add to array of possible boundary points if it has a max neighbor angle
-      // of greater than 90
-      if(node->neighbors[i]->prob > 150){
+      // of greater than 120
+      if(node->neighbors[i]->prob > 120){
         possible_nodes[count] = i;
         count++;
       }
@@ -365,7 +361,6 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
   // iterate through cloud..
   for(int j = 0; j < cloud->points.size(); j++){
     Node* current = node_points[j];
-    std::cout<<"point "<<node_points[j]<<std::endl;
     
     // finds and stores outer_k closest point and stored their indexes into the
     // point cloud in an array k_search
@@ -437,7 +432,6 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
       // find angles between vectors since they are in order already
       for(int i = 0; i < a_index; i++){
         difference = angles[i+1] - angles[i];
-        std::cout<<"difference "<<difference<<std::endl;
         if(difference > max){
           max = difference;
         }
@@ -448,19 +442,10 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
     //node_points[j]->print_neighbors();
     std::cout<<"\n"<<std::endl;
   }
- 
-  for(int p = 0; p < cloud->points.size(); p++){
-    std::ofstream new_file;
-  	new_file.open ("boundary.pcd", std::ios_base::app);
-    if(node_points[p]->prob > 120){
-      new_file << node_points[p]->x<<" "<<node_points[p]->y<<" "<<node_points[p]->z<<std::endl;
-    }
-    new_file.close();
-  }
 
-  /*
   // Iterating through points to see which ones satisfy the angle criterion and have two neighboring 
   // neighbor points
+  int count = 0;
   for(int j = 0; j < cloud->points.size(); j++){
     node_points[j]->bound_point = is_boundary_point(0, node_points[j]);
     std::ofstream new_file;
@@ -468,10 +453,11 @@ void calculate_hole(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud){
     std::cout<<"boundary point: "<<node_points[j]->bound_point<<std::endl;
     if(node_points[j]->bound_point){
       new_file << node_points[j]->x<<" "<<node_points[j]->y<<" "<<node_points[j]->z<<std::endl;
+      count++;
     }
     new_file.close();
   }
-  */
+  std::cout<<"count "<<count<<std::endl;
 }
 
 //function needed for viewing pcl
@@ -488,6 +474,7 @@ viewerOneOff (pcl::visualization::PCLVisualizer& viewer)
     
 }
 
+// launches graphical interface displaying point cloud in new_file.pcd
 void visualize(){
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBA>); 
 	pcl::io::loadPCDFile ("new_file.pcd", *cloud); 
@@ -559,26 +546,32 @@ int main (int argc, char** argv)
 		std::cout<<">> ";
 		std::string line;
 		getline(std::cin, line);
-		// Show help
+		// exit program
 		if (line == "_quit"){
 			break;
 		}
+    // show help menu
 		else if (line == "_help") {
 			showHelp ();
 		}
+    // calculate kdtree
 		else if (line == "_tree") {
 			kd_tree (cloud);
 			std::cin.ignore(INT_MAX, '\n');
 		}
+    // streams points to file
 		else if (line == "_points") {
 			points (cloud);
 		}
+    // calculate normals
 		else if (line == "_normals") {
 			normals (cloud);
 		}
+    // visualize 'new_file.pcd'
 		else if (line == "_visualize") {
 			visualize();
 		}
+    // calculate holes and stream to boundary.pcd
 		else if (line == "_holes") {
 			calculate_hole (cloud);
 			std::cin.ignore(INT_MAX, '\n');
